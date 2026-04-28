@@ -10,21 +10,9 @@ app.use(cookieParser());
 //     credentials: true
 // }));
 
-const cors = require("cors");
-
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://gen-ai-interview-report-generator.netlify.app"
-];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: "https://gen-ai-interview-report-generator.netlify.app",
   credentials: true
 }));
 
