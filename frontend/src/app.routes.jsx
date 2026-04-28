@@ -3,7 +3,7 @@ import Login from "./features/authentication/pages/login";
 import Register from "./features/authentication/pages/register";
 import Protected from "./features/authentication/components/protected";
 import Home from "./features/interview/pages/Home";
-import Interview from "./features/interview/pages/interview";
+import Interview from "./features/interview/pages/Interview";
 
 
 
