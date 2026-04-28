@@ -6,7 +6,7 @@ const app = express();
 
 app.use(cookieParser());
 app.use(cors({
-    origin: 'https://gen-ai-interview-report-generator.netlify.app',
+    origin: 'gen-ai-interview-report-generator.netlify.app',
     credentials: true
 }));
 
