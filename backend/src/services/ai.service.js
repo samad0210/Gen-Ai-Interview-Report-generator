@@ -205,18 +205,16 @@ try {
 
 async function generatePdfFromHtml(htmlContent) {
   try {
-    const executablePath = await chromium.executablePath();
-
     const browser = await puppeteer.launch({
       args: chromium.args,
-      executablePath,
+      executablePath: await chromium.executablePath(),
       headless: true,
     });
 
     const page = await browser.newPage();
 
     await page.setContent(htmlContent, {
-      waitUntil: "domcontentloaded", // ⚠️ networkidle0 hata diya (Render pe hang karta hai)
+      waitUntil: "domcontentloaded",
     });
 
     const pdfBuffer = await page.pdf({
@@ -227,9 +225,9 @@ async function generatePdfFromHtml(htmlContent) {
     await browser.close();
     return pdfBuffer;
 
-  } catch (error) {
-    console.error("❌ PUPPETEER ERROR:", error);
-    throw error;
+  } catch (err) {
+    console.error("❌ PUPPETEER ERROR:", err);
+    throw err;
   }
 }
  
