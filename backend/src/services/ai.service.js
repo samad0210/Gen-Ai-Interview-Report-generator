@@ -2,9 +2,9 @@ const { GoogleGenAI } = require("@google/genai")
 const { z } = require("zod")
 const { zodToJsonSchema } = require("zod-to-json-schema")
 // const puppeteer = require("puppeteer")
-// const chromium = require("@sparticuz/chromium");
-// const puppeteer = require("puppeteer-core");
-const pdf = require("html-pdf-node");
+const chromium = require("@sparticuz/chromium");
+const puppeteer = require("puppeteer-core");
+
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_API_KEY
@@ -202,69 +202,41 @@ try {
 
 //     return pdfBuffer
 // }
-// async function generatePdfFromHtml(htmlContent) {
-//   const browser = await puppeteer.launch({
-//     args: chromium.args,
-//     defaultViewport: chromium.defaultViewport,
-//     executablePath: await chromium.executablePath(),
-//     headless: chromium.headless,
-//   });
-
-//   const page = await browser.newPage();
-//   await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-
-//   const pdfBuffer = await page.pdf({
-//     format: "A4",
-//     margin: {
-//       top: "20mm",
-//       bottom: "20mm",
-//       left: "15mm",
-//       right: "15mm",
-//     },
-//   });
-
-//   await browser.close();
-//   return pdfBuffer;
-// }
-
-// async function generatePdfFromHtml(htmlContent) {
-//   try {
-//     const browser = await puppeteer.launch({
-//       args: chromium.args,
-//       defaultViewport: chromium.defaultViewport,
-//       executablePath: await chromium.executablePath(),
-//       headless: chromium.headless,
-//     });
-
-//     const page = await browser.newPage();
-//     await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-
-//     const pdfBuffer = await page.pdf({
-//       format: "A4",
-//       margin: {
-//         top: "20mm",
-//         bottom: "20mm",
-//         left: "15mm",
-//         right: "15mm",
-//       },
-//     });
-
-//     await browser.close();
-//     return pdfBuffer;
-
-//   } catch (error) {
-//     console.error("PUPPETEER ERROR:", error);
-//     throw error;
-//   }
-// }
 
 async function generatePdfFromHtml(htmlContent) {
-  let options = { format: "A4" };
-  let file = { content: htmlContent };
+  try {
+    const executablePath = await chromium.executablePath();
 
-  const pdfBuffer = await pdf.generatePdf(file, options);
-  return pdfBuffer;
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath,
+      headless: true,
+    });
+
+    const page = await browser.newPage();
+
+    await page.setContent(htmlContent, {
+      waitUntil: "domcontentloaded", // ⚠️ networkidle0 hata diya (Render pe hang karta hai)
+    });
+
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+    });
+
+    await browser.close();
+    return pdfBuffer;
+
+  } catch (error) {
+    console.error("❌ PUPPETEER ERROR:", error);
+    throw error;
+  }
 }
+ 
+
+
+
+
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
 
